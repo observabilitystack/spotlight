@@ -1,0 +1,75 @@
+#cloud-config
+merge_how:
+ - name: list
+   settings: [append]
+ - name: dict
+   settings: [recurse_array]
+
+write_files:
+  - owner: root:root
+    path: /etc/grafana/grafana.ini
+    content: |
+      [server]
+      root_url = https://spotlight.o11ystack.org/
+      [analytics]
+      reporting_enabled = false
+      check_for_updates = false
+      [security]
+      admin_password = ${grafana_admin_password}
+      secret_key = 61TrPlJtwvXtL5kS
+      [users]
+      allow_sign_up = false
+      allow_org_create = false
+      default_theme = light
+      [auth]
+      disable_signout_menu = false
+      disable_login_form = true
+      [auth.anonymous]
+      enabled = true
+      [alerting]
+      enabled = false
+      [unified_alerting]
+      enabled=false
+      [log]
+      mode = console
+      [dashboards]
+      default_home_dashboard_path = /etc/grafana/dashboards/aws-spot-price.json
+
+  - owner: root:root
+    path: /etc/grafana/provisioning/datasources/datasources.yaml
+    content: |
+      apiVersion: 1
+      datasources:
+        - name: prometheus
+          type: prometheus
+          access: proxy
+          isDefault: true
+          url: http://prometheus:9090
+
+  - owner: root:root
+    path: /etc/grafana/provisioning/dashboards/dashboards.yaml
+    content: |
+      apiVersion: 1
+      providers:
+        - name: dashboards
+          type: file
+          updateIntervalSeconds: 30
+          options:
+            path: /etc/grafana/dashboards
+            foldersFromFilesStructure: true
+
+  - owner: root:root
+    path: /etc/prometheus/prometheus.yaml
+    content: |
+      global:
+        scrape_interval: 1m
+
+      scrape_configs:
+        - job_name: 'spot'
+          static_configs:
+            - targets:
+              - spot-price-exporter:8080
+
+runcmd:
+  - mkdir -p /etc/grafana/dashboards
+  - curl -sfLo /etc/grafana/dashboards/aws-spot-price.json "https://raw.githubusercontent.com/ping7io/examples/main/dashboards/aws-spot-price.json"

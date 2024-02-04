@@ -1,0 +1,75 @@
+## template: jinja
+#cloud-config
+merge_how:
+  - name: list
+    settings: [append]
+  - name: dict
+    settings: [recurse_array]
+
+write_files:
+  - owner: root:root
+    path: /etc/traefik/tls.yaml
+    permissions: "0644"
+    content: |
+      tls:
+        options:
+          default:
+            minVersion: VersionTLS12
+            preferServerCipherSuites: true
+            cipherSuites:
+              - TLS_AES_256_GCM_SHA384
+              - TLS_AES_128_GCM_SHA256
+              - TLS_CHACHA20_POLY1305_SHA256
+              - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+              - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+              - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+
+  - owner: root:root
+    path: /etc/systemd/system/traefik.service
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=Traefik Reverse Proxy
+      After=docker.service
+      Requires=docker.service
+
+      [Service]
+      Restart=always
+      ExecStart=/usr/bin/docker run --rm \
+          -p 80:80 \
+          -p 443:443 \
+          -p 9000:8080 \
+          --net spotlight \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          -v /etc/traefik:/etc/traefik/ \
+          --label "traefik.enable=true" \
+          --label "traefik.http.routers.metrics.rule=HostRegexp(`{host:[0-9.]+}`)" \
+          --label "traefik.http.routers.metrics.service=prometheus@internal" \
+          --name %N \
+          traefik:2.10.7 \
+          --api.insecure=true \
+          --providers.docker \
+          --providers.docker.exposedByDefault=false \
+          --providers.file.filename=/etc/traefik/tls.yaml \
+          --metrics=true \
+          --metrics.prometheus=true \
+          --metrics.prometheus.manualrouting=true \
+          --accesslog=true \
+          --ping=true \
+          --ping.manualrouting=true \
+          --entrypoints.web.address=:80 \
+          --entrypoints.web.http.redirections.entryPoint.to=websecure \
+          --entrypoints.web.http.redirections.entryPoint.scheme=https \
+          --entrypoints.websecure.address=:443 \
+          --entryPoints.websecure.http.tls=true \
+          --certificatesresolvers.acme.acme.email=info@spotlight.o11ystack.org \
+          --certificatesresolvers.acme.acme.storage=acme.json \
+          --certificatesresolvers.acme.acme.httpchallenge.entrypoint=web
+
+      [Install]
+      WantedBy=multi-user.target
+
+runcmd:
+  - systemctl daemon-reload
+  - systemctl enable traefik
+  - systemctl start traefik

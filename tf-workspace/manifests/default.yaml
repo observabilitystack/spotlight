@@ -1,0 +1,45 @@
+#cloud-config
+merge_how:
+ - name: list
+   settings: [append]
+ - name: dict
+   settings: [recurse_array]
+
+users:
+  - name: terraform
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ${terraform_ssh_public_key}
+  - name: torsten
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGY2GZU19neGfVAVuIOKt0iIMKUDDz0H72dPROsVPFen
+
+packages:
+  - unattended-upgrades
+  - apt-listchanges
+  - apt-transport-https
+  - gnupg-agent
+  - gnupg
+  - ca-certificates
+  - lsb-release
+  - curl
+  - jq
+  - joe
+
+write_files:
+  - path: /etc/ssh/sshd_config
+    owner: root:root
+    permissions: '0644'
+    content: |
+      PermitRootLogin no
+      PasswordAuthentication no
+      ChallengeResponseAuthentication no
+      UsePAM yes
+      AllowAgentForwarding yes
+      AllowTcpForwarding yes
+      X11Forwarding no
+      PrintMotd no
+      AcceptEnv LANG LC_* EDITOR
+      Subsystem sftp	/usr/lib/openssh/sftp-server

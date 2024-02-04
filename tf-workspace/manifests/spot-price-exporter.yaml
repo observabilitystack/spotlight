@@ -1,0 +1,33 @@
+#cloud-config
+merge_how:
+ - name: list
+   settings: [append]
+ - name: dict
+   settings: [recurse_array]
+
+write_files:
+  - owner: root:root
+    path: /etc/systemd/system/spot-price-exporter.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=Prometheus Spot Price Exporter
+      After=docker.service
+      Requires=docker.service
+
+      [Service]
+      Restart=always
+      ExecStart=/usr/bin/docker run --rm \
+          --net spotlight \
+          -e AWS_ACCESS_KEY_ID=${aws_access_key} \
+          -e AWS_SECRET_ACCESS_KEY=${aws_secret_access_key} \
+          --name %N \
+          banzaicloud/spot-price-exporter
+
+      [Install]
+      WantedBy=multi-user.target
+
+runcmd:
+  - systemctl daemon-reload
+  - systemctl enable spot-price-exporter
+  - systemctl start spot-price-exporter
