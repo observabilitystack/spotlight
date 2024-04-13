@@ -26,7 +26,7 @@ write_files:
           -v /etc/prometheus:/etc/prometheus \
           -v /var/lib/prometheus/data:/data \
           --name %N \
-          prom/prometheus:v2.49.1 \
+          prom/prometheus:v2.51.2 \
           --config.file=/etc/prometheus/prometheus.yaml \
           --storage.tsdb.path=/data \
           --storage.tsdb.retention.size=30GB \
@@ -40,6 +40,7 @@ write_files:
 runcmd:
   # Create storage directory
   - mkdir -p /var/lib/prometheus/data
+  - mkdir -p /var/lib/prometheus/acme
   - chown -R nobody:nogroup /var/lib/prometheus/data
 
   # Launch prometheus

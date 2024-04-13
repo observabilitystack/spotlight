@@ -1,4 +1,4 @@
-🐞 Spotlight Infrastructure As Code
+# 🐞 Spotlight Infrastructure As Code
 
 
 ```bash

@@ -26,7 +26,7 @@ write_files:
           --name grafana \
           --label "traefik.enable=true" \
           --label "traefik.http.routers.grafana.rule=Host(`${grafana_domain}`)" \
-          grafana/grafana:10.3.1
+          grafana/grafana:10.4.2
 
       [Install]
       WantedBy=multi-user.target

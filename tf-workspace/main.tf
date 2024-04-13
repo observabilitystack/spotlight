@@ -18,8 +18,12 @@ resource "hcloud_volume" "this" {
 }
 
 resource "hcloud_floating_ip" "this" {
-  type      = "ipv4"
-  server_id = hcloud_server.this.id
+  type = "ipv4"
+}
+
+resource "hcloud_floating_ip_assignment" "this" {
+  floating_ip_id = hcloud_floating_ip.this.id
+  server_id      = hcloud_server.this.id
 }
 
 resource "hcloud_server" "this" {
@@ -27,7 +31,7 @@ resource "hcloud_server" "this" {
   image       = "debian-12"
   server_type = var.instance_size
   location    = var.datacenter
-  ssh_keys    = [ hcloud_ssh_key.root.name ]
+  ssh_keys    = [hcloud_ssh_key.root.name]
   user_data   = data.cloudinit_config.this.rendered
 
   labels = {
@@ -58,52 +62,23 @@ data "cloudinit_config" "this" {
   gzip          = true
   base64_encode = true
 
-  part {
-    content_type = "text/cloud-config"
-    content = templatefile("${path.module}/manifests/default.yaml", {
-      terraform_ssh_public_key = tls_private_key.terraform.public_key_openssh
-    })
-  }
-  part {
-    content_type = "text/cloud-config"
-    content      = file("${path.module}/manifests/node-exporter.yaml")
-  }
-  part {
-    content_type = "text/cloud-config"
-    content = file("${path.module}/manifests/docker.yaml")
-  }
-  part {
-    content_type = "text/cloud-config"
-    content = file("${path.module}/manifests/traefik-tls.yaml")
-  }
-  part {
-    content_type = "text/cloud-config"
-    content = templatefile("${path.module}/manifests/spot-price-exporter.yaml", {
-      aws_access_key        = var.spotlight_aws_access_key
-      aws_secret_access_key = var.spotlight_aws_secret_access_key
-    })
-  }
-  part {
-    content_type = "text/cloud-config"
-    content = templatefile("${path.module}/manifests/spotlight-configuration.yaml", {
-      grafana_admin_password = random_password.grafana_admin.result
-    })
-  }
-  part {
-    content_type = "text/cloud-config"
-    content = file("${path.module}/manifests/prometheus.yaml")
-  }
-  part {
-    content_type = "text/cloud-config"
-    content = templatefile("${path.module}/manifests/grafana.yaml", {
-      grafana_domain = "spotlight.o11ystack.org"
-    })
-  }
-  part {
-    content_type = "text/cloud-config"
-    content = templatefile("${path.module}/manifests/verify-services.yaml", {
-      services = toset(["docker", "grafana", "prometheus", "traefik"])
-    })
+  dynamic "part" {
+    for_each = ["default.yaml", "hetzner-floating-ip.yaml", "node-exporter.yaml", "docker.yaml", "spot-price-exporter.yaml", "spotlight-configuration.yaml", "prometheus.yaml", "grafana.yaml", "traefik-tls.yaml", "verify-services.yaml"]
+
+    content {
+      content_type = "text/cloud-config"
+      content = templatefile("${path.module}/manifests/${part.value}",
+        {
+          terraform_ssh_public_key = tls_private_key.terraform.public_key_openssh,
+          floating_ip              = hcloud_floating_ip.this.ip_address
+          aws_access_key           = var.spotlight_aws_access_key,
+          aws_secret_access_key    = var.spotlight_aws_secret_access_key,
+          grafana_admin_password   = random_password.grafana_admin.result,
+          grafana_domain           = "spotlight.o11ystack.org",
+          services                 = toset(["docker", "grafana", "prometheus", "traefik"])
+        }
+      )
+    }
   }
 }
 
@@ -112,6 +87,16 @@ data "cloudinit_config" "this" {
 # ---------------------------------------------------------------------
 resource "hcloud_firewall" "this" {
   name = "public-spotlight"
+
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "22"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
 
   rule {
     direction = "in"
