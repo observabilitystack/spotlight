@@ -100,4 +100,4 @@ write_files:
 
 runcmd:
   - mkdir -p /etc/grafana/dashboards
-  - curl -sfLo /etc/grafana/dashboards/aws-spot-price.json "https://raw.githubusercontent.com/ping7io/examples/main/dashboards/aws-spot-price.json"
+  - curl -sfLo /etc/grafana/dashboards/aws-spot-price.json "https://raw.githubusercontent.com/observabilitystack/spotlight/main/aws-spot-price-dashboard.json"
