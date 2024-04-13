@@ -203,11 +203,9 @@
         "current": {
           "selected": true,
           "text": [
-            "c6",
             "c7"
           ],
           "value": [
-            "c6",
             "c7"
           ]
         },
@@ -331,7 +329,7 @@
     ]
   },
   "time": {
-    "from": "now-6M",
+    "from": "now-3M",
     "to": "now"
   },
   "timepicker": {},
