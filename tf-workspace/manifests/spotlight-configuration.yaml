@@ -75,6 +75,28 @@ write_files:
           static_configs:
             - targets:
               - spot-price-exporter:8080
+          metric_relabel_configs:
+            - source_labels: [__name__]
+              regex: go_.*
+              action: drop
+            - source_labels: [instance_type]
+              target_label: cpu_type
+              replacement: unspecified
+            - source_labels: [instance_type]
+              regex: .+i\..+
+              target_label: cpu_type
+              replacement: intel
+            - source_labels: [instance_type]
+              regex: .+a\..+
+              target_label: cpu_type
+              replacement: amd
+            - source_labels: [instance_type]
+              regex: .+g\..+
+              target_label: cpu_type
+              replacement: graviton
+            - source_labels: [instance_type]
+              regex: .+\.(\d.+)
+              target_label: instance_size
 
 runcmd:
   - mkdir -p /etc/grafana/dashboards

@@ -1,0 +1,328 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "datasource",
+            "uid": "grafana"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 1,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P1809F7CD0C75ACF3"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 0,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "linear",
+              "lineWidth": 1,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": true,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "currencyUSD"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 14,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 2,
+        "options": {
+          "legend": {
+            "calcs": [
+              "mean",
+              "max",
+              "last"
+            ],
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          }
+        },
+        "targets": [
+          {
+            "datasource": {
+              "type": "prometheus",
+              "uid": "P1809F7CD0C75ACF3"
+            },
+            "exemplar": true,
+            "expr": "sum without (instance) (aws_spot_current_price{availability_zone=~\"$availability_zone\",instance_type=~\"$instance_type\"})",
+            "instant": false,
+            "interval": "",
+            "legendFormat": "{{ instance_type }} in {{ availability_zone }}",
+            "refId": "A"
+          }
+        ],
+        "title": "AWS Spot Price in $region",
+        "type": "timeseries"
+      }
+    ],
+    "refresh": "",
+    "schemaVersion": 39,
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": "eu-central-1",
+            "value": "eu-central-1"
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P1809F7CD0C75ACF3"
+          },
+          "definition": "label_values(availability_zone)",
+          "hide": 0,
+          "includeAll": false,
+          "label": "Region",
+          "multi": true,
+          "name": "region",
+          "options": [],
+          "query": {
+            "query": "label_values(availability_zone)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "/(?<value>.*)[a-c]$/",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P1809F7CD0C75ACF3"
+          },
+          "definition": "label_values(aws_spot_current_price{availability_zone=~\"$region.*\"}, availability_zone)",
+          "hide": 0,
+          "includeAll": true,
+          "label": "Availability Zone",
+          "multi": true,
+          "name": "availability_zone",
+          "options": [],
+          "query": {
+            "query": "label_values(aws_spot_current_price{availability_zone=~\"$region.*\"}, availability_zone)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 1,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "c6",
+              "c7"
+            ],
+            "value": [
+              "c6",
+              "c7"
+            ]
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P1809F7CD0C75ACF3"
+          },
+          "definition": "label_values(aws_spot_current_price{availability_zone=~\"$region.*\"}, instance_type)",
+          "hide": 0,
+          "includeAll": false,
+          "label": "Instance Generation",
+          "multi": true,
+          "name": "instance_generation",
+          "options": [],
+          "query": {
+            "query": "label_values(aws_spot_current_price{availability_zone=~\"$region.*\"}, instance_type)",
+            "refId": "StandardVariableQuery"
+          },
+          "refresh": 1,
+          "regex": "/(?<value>[a-z0-9]{2})/",
+          "skipUrlSync": false,
+          "sort": 1,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "definition": "label_values(aws_spot_current_price,cpu_type)",
+          "hide": 0,
+          "includeAll": true,
+          "label": "CPU Type",
+          "multi": true,
+          "name": "cpu_type",
+          "options": [],
+          "query": {
+            "qryType": 1,
+            "query": "label_values(aws_spot_current_price,cpu_type)",
+            "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 1,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "4xlarge"
+            ],
+            "value": [
+              "4xlarge"
+            ]
+          },
+          "definition": "label_values(aws_spot_current_price,instance_size)",
+          "hide": 0,
+          "includeAll": true,
+          "label": "Instance Size",
+          "multi": true,
+          "name": "instance_size",
+          "options": [],
+          "query": {
+            "qryType": 1,
+            "query": "label_values(aws_spot_current_price,instance_size)",
+            "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 3,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P1809F7CD0C75ACF3"
+          },
+          "definition": "label_values(aws_spot_current_price{availability_zone=~\"$region.*\", instance_type=~\"$instance_generation.*\", cpu_type=~\"$cpu_type\", instance_size=~\"$instance_size\"},instance_type)",
+          "hide": 0,
+          "includeAll": true,
+          "label": "Instance Type",
+          "multi": true,
+          "name": "instance_type",
+          "options": [],
+          "query": {
+            "qryType": 1,
+            "query": "label_values(aws_spot_current_price{availability_zone=~\"$region.*\", instance_type=~\"$instance_generation.*\", cpu_type=~\"$cpu_type\", instance_size=~\"$instance_size\"},instance_type)",
+            "refId": "PrometheusVariableQueryEditor-VariableQuery"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 1,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6M",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "AWS Spot Prices",
+    "uid": "OcjMrlF7k",
+    "version": 14,
+    "weekStart": ""
+  }

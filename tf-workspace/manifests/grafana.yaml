@@ -25,6 +25,8 @@ write_files:
           --name grafana \
           --label "traefik.enable=true" \
           --label "traefik.http.routers.grafana.rule=Host(`${grafana_domain}`)" \
+          --label "traefik.http.routers.grafana.tls=true" \
+          --label "traefik.http.routers.grafana.tls.certresolver=acme" \
           grafana/grafana:10.4.2
 
       [Install]
