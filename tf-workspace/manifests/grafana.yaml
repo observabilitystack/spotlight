@@ -20,7 +20,6 @@ write_files:
       ExecStart=/usr/bin/docker run --rm \
           -p 3000:3000 \
           --net spotlight \
-          -e GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-polystat-panel \
           -v /etc/grafana:/etc/grafana \
           -v /var/lib/grafana:/var/lib/grafana \
           --name grafana \

@@ -32,6 +32,12 @@ write_files:
       enabled=false
       [log]
       mode = console
+      [profile]
+      enabled = false
+      [query_history]
+      enabled = false
+      [metrics]
+      enabled = false
       [dashboards]
       default_home_dashboard_path = /etc/grafana/dashboards/aws-spot-price.json
 
