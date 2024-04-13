@@ -95,7 +95,7 @@ write_files:
               target_label: cpu_type
               replacement: graviton
             - source_labels: [instance_type]
-              regex: .+\.(\d.+)
+              regex: .+\.(.+)
               target_label: instance_size
 
 runcmd:

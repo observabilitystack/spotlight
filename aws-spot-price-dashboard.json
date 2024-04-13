@@ -139,7 +139,7 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "eu-central-1"
           ],
@@ -170,7 +170,7 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
             "All"
           ],
@@ -234,17 +234,17 @@
         "current": {
           "selected": true,
           "text": [
-            "All"
+            "graviton"
           ],
           "value": [
-            "$__all"
+            "graviton"
           ]
         },
         "datasource": {
           "type": "prometheus",
           "uid": "P1809F7CD0C75ACF3"
         },
-        "definition": "label_values(aws_spot_current_price,cpu_type)",
+        "definition": "label_values(aws_spot_current_price{instance_type=~\"$instance_generation.*\"},cpu_type)",
         "hide": 0,
         "includeAll": true,
         "label": "CPU Type",
@@ -253,7 +253,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(aws_spot_current_price,cpu_type)",
+          "query": "label_values(aws_spot_current_price{instance_type=~\"$instance_generation.*\"},cpu_type)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -276,7 +276,7 @@
           "type": "prometheus",
           "uid": "P1809F7CD0C75ACF3"
         },
-        "definition": "label_values(aws_spot_current_price,instance_size)",
+        "definition": "label_values(aws_spot_current_price{instance_type=~\"$instance_generation.*\", cpu_type=~\"$cpu_type\"},instance_size)",
         "hide": 0,
         "includeAll": true,
         "label": "Instance Size",
@@ -285,7 +285,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(aws_spot_current_price,instance_size)",
+          "query": "label_values(aws_spot_current_price{instance_type=~\"$instance_generation.*\", cpu_type=~\"$cpu_type\"},instance_size)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
