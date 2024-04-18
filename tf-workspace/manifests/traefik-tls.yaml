@@ -44,8 +44,11 @@ write_files:
           -v /etc/traefik:/etc/traefik/ \
           -v /var/lib/prometheus/acme/:/var/lib/prometheus/acme/ \
           --label "traefik.enable=true" \
-          --label "traefik.http.routers.metrics.rule=HostRegexp(`{host:[0-9.]+}`)" \
-          --label "traefik.http.routers.metrics.service=prometheus@internal" \
+          --label "traefik.http.routers.traefik-metrics.rule=Host(`${grafana_domain}`) && Path(`/metrics/traefik`)" \
+          --label "traefik.http.routers.traefik-metrics.service=prometheus@internal" \
+          --label "traefik.http.routers.traefik-metrics.entrypoints=websecure" \
+          --label "traefik.http.routers.traefik-metrics.tls=true" \
+          --label "traefik.http.routers.traefik-metrics.tls.certresolver=acme" \
           --name %N \
           traefik:2.11.2 \
           --api.insecure=true \

@@ -15,20 +15,27 @@ write_files:
 
       [Service]
       Restart=always
-      ExecStart=/usr/local/bin/node_exporter \
-        --web.config.file=/etc/prometheus/web-config.yaml \
-        --collector.filesystem.ignored-mount-points="^/(sys|proc|dev|run|var/lib/docker.*|mnt/HC_.*)($|/)" \
-        --collector.netdev.device-exclude="^(docker[0-9]|vboxnet[0-9]|br-.+|veth.+)$"
+      ExecStart=/usr/bin/docker run --rm \
+          --name node-exporter \
+          --net spotlight \
+          --pid="host" \
+          --label "traefik.enable=true" \
+          --label "traefik.http.routers.node_exporter.rule=Host(`${grafana_domain}`) && Path(`/metrics/node`)" \
+          --label "traefik.http.routers.node_exporter.entrypoints=websecure" \
+          --label "traefik.http.routers.node_exporter.tls=true" \
+          --label "traefik.http.routers.node_exporter.tls.certresolver=acme" \
+          --label "traefik.http.services.node_exporter.loadbalancer.server.port=9100" \
+          -v "/:/host:ro,rslave" \
+          quay.io/prometheus/node-exporter:latest \
+                --path.rootfs=/host \
+                --web.telemetry-path="/metrics/node" \
+                --collector.filesystem.ignored-mount-points="^/(sys|proc|dev|run|var/lib/docker.*|mnt/HC_.*)($|/)" \
+                --collector.netdev.device-exclude="^(docker[0-9]|vboxnet[0-9]|br-.+|veth.+)$"
 
       [Install]
       WantedBy=multi-user.target
 
 runcmd:
-  # Install node-exporter
-  - curl -sfLo /tmp/node_exporter.tar.gz https://github.com/prometheus/node_exporter/releases/download/v1.7.0/node_exporter-1.7.0.linux-arm64.tar.gz
-  - tar xzvf /tmp/node_exporter.tar.gz -C /usr/local/bin/ --strip-components=1 --wildcards --no-anchored '*node_exporter' -C /usr/local/bin/
-  - chmod 755 /usr/local/bin/node_exporter
-
   # Launch node-exporter
   - systemctl daemon-reload
   - systemctl enable node-exporter
