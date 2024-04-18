@@ -83,15 +83,15 @@ write_files:
               target_label: cpu_type
               replacement: unspecified
             - source_labels: [instance_type]
-              regex: .+i\..+
+              regex: .+\di.+
               target_label: cpu_type
               replacement: intel
             - source_labels: [instance_type]
-              regex: .+a\..+
+              regex: .+\da.+
               target_label: cpu_type
               replacement: amd
             - source_labels: [instance_type]
-              regex: .+g\..+
+              regex: .+\dg.+
               target_label: cpu_type
               replacement: graviton
             - source_labels: [instance_type]
