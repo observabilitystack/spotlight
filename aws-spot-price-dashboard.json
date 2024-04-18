@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -55,6 +54,9 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
@@ -71,6 +73,7 @@
             }
           },
           "mappings": [],
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -98,16 +101,16 @@
       "options": {
         "legend": {
           "calcs": [
-            "mean",
-            "max",
             "last"
           ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Name",
+          "sortDesc": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
@@ -121,7 +124,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum without (instance) (aws_spot_current_price{availability_zone=~\"$availability_zone\",instance_type=~\"$instance_type\",region=\"$region\"})",
+          "expr": "avg by (region, availability_zone, instance_type) (aws_spot_current_price{availability_zone=~\"$availability_zone\",instance_type=~\"$instance_type\",region=\"$region\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "{{ instance_type }} in {{ availability_zone }}",
@@ -130,6 +133,45 @@
       ],
       "title": "AWS Spot Price in $region",
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P1809F7CD0C75ACF3"
+      },
+      "description": "",
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 3,
+      "links": [
+        {
+          "title": "Get in touch with @tboeghk",
+          "url": "https://www.thiswayup.de/"
+        },
+        {
+          "title": "Observabilitystack",
+          "url": "https://github.com/observabilitystack"
+        },
+        {
+          "title": "Improve on GitHub",
+          "url": "https://github.com/observabilitystack/spotlight"
+        }
+      ],
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "# 🐞 About AWS spotlight.o11ystack.org\n\nUse this AWS spot price database dating back to 2021 for spot instance sizing \nanalysis. Pick the spot instances not only with a large discount but also with\ndecaying price predictions to keep your infrastructure running without \ninterruptions.\n\n## 🚀 Improvements\n\nWe're always open for improvements and suggestions! The [code for this website\nis on GitHub](https://github.com/observabilitystack/spotlight).\n\n## 😎 Need help in tackling AWS costs?\n\nThis service is brought to you by [tboeghk](https://github.com/tboeghk) for free.\nNeed help in tackling AWS EC2 costs? Get started with spot instances\ntoday! Let's talk!",
+        "mode": "markdown"
+      },
+      "pluginVersion": "10.4.2",
+      "type": "text"
     }
   ],
   "refresh": "",
@@ -139,7 +181,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "eu-central-1"
           ],
@@ -170,7 +212,7 @@
       },
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "All"
           ],
@@ -203,10 +245,12 @@
         "current": {
           "selected": true,
           "text": [
-            "c7"
+            "c7",
+            "c6"
           ],
           "value": [
-            "c7"
+            "c7",
+            "c6"
           ]
         },
         "datasource": {
@@ -336,6 +380,6 @@
   "timezone": "",
   "title": "AWS Spot Prices",
   "uid": "OcjMrlF7k",
-  "version": 14,
+  "version": 1,
   "weekStart": ""
 }
