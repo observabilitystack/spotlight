@@ -26,10 +26,10 @@ write_files:
           -v /etc/prometheus:/etc/prometheus \
           -v /var/lib/prometheus/data:/data \
           --name %N \
-          prom/prometheus:v2.51.2 \
+          prom/prometheus:v2.55.1 \
           --config.file=/etc/prometheus/prometheus.yaml \
           --storage.tsdb.path=/data \
-          --storage.tsdb.retention.size=30GB \
+          --storage.tsdb.retention.size=60GB \
           --web.enable-lifecycle \
           --web.enable-admin-api \
           --enable-feature=memory-snapshot-on-shutdown

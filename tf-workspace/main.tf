@@ -11,10 +11,14 @@ resource "random_id" "this" {
 
 resource "hcloud_volume" "this" {
   name      = "prometheus-spotlight-data"
-  size      = 32
+  size      = 64
   server_id = hcloud_server.this.id
   automount = true
   format    = "ext4"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "hcloud_floating_ip" "this" {
@@ -74,7 +78,7 @@ data "cloudinit_config" "this" {
           aws_access_key           = var.spotlight_aws_access_key,
           aws_secret_access_key    = var.spotlight_aws_secret_access_key,
           grafana_admin_password   = random_password.grafana_admin.result,
-          grafana_domain           = "spotlight.o11ystack.org",
+          grafana_domain           = "spotlight.o11y.cool",
           services                 = toset(["docker", "grafana", "prometheus", "traefik"])
         }
       )

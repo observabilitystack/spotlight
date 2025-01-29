@@ -11,11 +11,19 @@ terraform {
   required_providers {
     hcloud = {
       source = "hetznercloud/hcloud"
-      version = "~> 1.45.0"
+      version = "~> 1.49.1"
     }
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.6.0"
+      version = "~> 3.6.3"
+    }
+    cloudinit = {
+      source  = "hashicorp/cloudinit"
+      version = "~> 2.3.5"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0.6"
     }
   }
 }

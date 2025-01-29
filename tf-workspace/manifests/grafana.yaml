@@ -28,7 +28,7 @@ write_files:
           --label "traefik.http.routers.grafana.entrypoints=websecure" \
           --label "traefik.http.routers.grafana.tls=true" \
           --label "traefik.http.routers.grafana.tls.certresolver=acme" \
-          grafana/grafana:10.4.2
+          grafana/grafana:11.5.0
 
       [Install]
       WantedBy=multi-user.target
