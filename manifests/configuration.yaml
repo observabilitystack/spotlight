@@ -1,0 +1,87 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spotlight-configuration
+  namespace: o11y-cool
+data:
+  dashboards.yaml: |
+    apiVersion: 1
+    providers:
+      - name: dashboards
+        type: file
+        updateIntervalSeconds: 30
+        options:
+          path: /etc/grafana/dashboards
+          foldersFromFilesStructure: true
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: prometheus
+        type: prometheus
+        access: proxy
+        isDefault: true
+        url: http://localhost:9090
+  prometheus.yaml: |
+    global:
+      scrape_interval: 1m
+
+    scrape_configs:
+      - job_name: 'spot'
+        static_configs:
+          - targets:
+            - localhost:8080
+        metric_relabel_configs:
+          - source_labels: [__name__]
+            regex: go_.*
+            action: drop
+          - source_labels: [instance_type]
+            target_label: cpu_type
+            replacement: unspecified
+          - source_labels: [instance_type]
+            regex: .+\di.+
+            target_label: cpu_type
+            replacement: intel
+          - source_labels: [instance_type]
+            regex: .+\da.+
+            target_label: cpu_type
+            replacement: amd
+          - source_labels: [instance_type]
+            regex: .+\dg.+
+            target_label: cpu_type
+            replacement: graviton
+          - source_labels: [instance_type]
+            regex: .+\.(.+)
+            target_label: instance_size
+  grafana.ini: |
+    [server]
+    root_url = https://${grafana_domain}/
+    [analytics]
+    reporting_enabled = false
+    check_for_updates = false
+    [security]
+    admin_password = ${grafana_admin_password}
+    secret_key = 61TrPlJtwvXtL5kS
+    [users]
+    allow_sign_up = false
+    allow_org_create = false
+    default_theme = light
+    [auth]
+    disable_signout_menu = false
+    disable_login_form = true
+    [auth.anonymous]
+    enabled = true
+    [alerting]
+    enabled = false
+    [unified_alerting]
+    enabled=false
+    [log]
+    mode = console
+    [profile]
+    enabled = false
+    [query_history]
+    enabled = false
+    [metrics]
+    enabled = false
+    [dashboards]
+    default_home_dashboard_path = /etc/grafana/dashboards/aws-spot-price-dashboard.json

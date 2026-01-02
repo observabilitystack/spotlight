@@ -1,0 +1,128 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: spotlight-prometheus-data
+  namespace: o11y-cool
+spec:
+  storageClassName: nfs-client
+  resources:
+    requests:
+      storage: 128Gi
+  accessModes:
+    - ReadWriteOnce
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spotlight-deployment
+  namespace: o11y-cool
+  labels:
+    app: spotlight
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spotlight
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: spotlight
+    spec:
+      volumes:
+      - name: spotlight-prometheus-data
+        persistentVolumeClaim:
+          claimName: spotlight-prometheus-data
+      - name: spotlight-configuration
+        configMap:
+          name: spotlight-configuration
+      - name: spotlight-dashboard
+        configMap:
+          name: spotlight-dashboard
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v3.8.1
+        ports:
+        - name: prometheus
+          containerPort: 9090
+        args: [
+          "--config.file=/etc/prometheus/prometheus.yaml",
+          "--storage.tsdb.path=/data",
+          "--storage.tsdb.retention.size=60GB",
+          "--web.enable-lifecycle",
+          "--web.enable-admin-api",
+          "--enable-feature=memory-snapshot-on-shutdown"
+        ]
+        volumeMounts:
+        - mountPath: "/data"
+          name: spotlight-prometheus-data
+        - mountPath: "/etc/prometheus/prometheus.yaml"
+          name: spotlight-configuration
+          subPath: prometheus.yaml
+      - name: spot-price-exporter
+        image: ghcr.io/observabilitystack/spot-price-exporter:latest
+        ports:
+        - name: exporter
+          containerPort: 8080
+        env:
+        - name: AWS_ACCESS_KEY_ID
+          value: ${aws_access_key}
+        - name: AWS_SECRET_ACCESS_KEY
+          value: ${aws_secret_access_key}
+      - name: grafana
+        image: grafana/grafana:12.3.1
+        ports:
+        - name: grafana
+          containerPort: 3000
+        volumeMounts:
+        - mountPath: "/etc/grafana/provisioning/dashboards/dashboards.yaml"
+          name: spotlight-configuration
+          subPath: dashboards.yaml
+        - mountPath: "/etc/grafana/provisioning/datasources/datasources.yaml"
+          name: spotlight-configuration
+          subPath: datasources.yaml
+        - mountPath: "/etc/grafana/dashboards/aws-spot-price-dashboard.json"
+          name: spotlight-dashboard
+          subPath: aws-spot-price-dashboard.json
+        - mountPath: "/etc/grafana/grafana.ini"
+          name: spotlight-configuration
+          subPath: grafana.ini
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spotlight
+  namespace: o11y-cool
+  labels:
+    app: spotlight
+spec:
+  ports:
+  - name: web
+    port: 80
+    targetPort: grafana
+  selector:
+    app: spotlight
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prometheus
+  namespace: o11y-cool
+  annotations:
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: acme
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+spec:
+  rules:
+    - host: ${grafana_domain}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: spotlight
+                port:
+                  name: web
