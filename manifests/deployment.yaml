@@ -89,6 +89,13 @@ spec:
         - mountPath: "/etc/grafana/grafana.ini"
           name: spotlight-configuration
           subPath: grafana.ini
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
 ---
 apiVersion: v1
 kind: Service
