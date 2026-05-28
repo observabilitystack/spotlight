@@ -43,7 +43,7 @@ spec:
           name: spotlight-dashboard
       containers:
       - name: prometheus
-        image: prom/prometheus:v3.8.1
+        image: prom/prometheus:v3.11.3
         ports:
         - name: prometheus
           containerPort: 9090
@@ -72,7 +72,7 @@ spec:
         - name: AWS_SECRET_ACCESS_KEY
           value: ${aws_secret_access_key}
       - name: grafana
-        image: grafana/grafana:12.3.1
+        image: grafana/grafana:12.4.3
         ports:
         - name: grafana
           containerPort: 3000
