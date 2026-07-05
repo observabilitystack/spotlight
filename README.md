@@ -23,7 +23,8 @@ EOF
 kubectl create namespace o11y-cool
 kubectl create configmap spotlight-dashboard \
     --namespace=o11y-cool \
-    --from-file=aws-spot-price-dashboard.json
+    --from-file=aws-spot-price-dashboard.json \
+    --dry-run=client -o yaml | kubectl apply -f -
 ```
 
 ```bash
