@@ -83,5 +83,7 @@ data:
     enabled = false
     [metrics]
     enabled = false
+    [panels]
+    disable_sanitize_html = true
     [dashboards]
     default_home_dashboard_path = /etc/grafana/dashboards/aws-spot-price-dashboard.json

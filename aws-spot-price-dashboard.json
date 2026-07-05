@@ -23,7 +23,7 @@
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
+  "graphTooltip": 1,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -35,7 +35,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisBorderShow": false,
@@ -57,7 +57,7 @@
             "lineStyle": {
               "fill": "solid"
             },
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -72,6 +72,7 @@
               "mode": "off"
             }
           },
+          "decimals": 4,
           "mappings": [],
           "min": 0,
           "thresholds": {
@@ -80,10 +81,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -101,17 +98,19 @@
       "options": {
         "legend": {
           "calcs": [
-            "last"
+            "mean",
+            "last",
+            "max"
           ],
           "displayMode": "table",
           "placement": "right",
           "showLegend": true,
-          "sortBy": "Name",
+          "sortBy": "Last *",
           "sortDesc": true
         },
         "tooltip": {
-          "mode": "single",
-          "sort": "none"
+          "mode": "multi",
+          "sort": "desc"
         }
       },
       "repeat": "region",
@@ -167,8 +166,8 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "# 🐞 About AWS spotlight.o11ystack.org\n\nUse this AWS spot price database dating back to 2021 for spot instance sizing \nanalysis. Pick the spot instances not only with a large discount but also with\ndecaying price predictions to keep your infrastructure running without \ninterruptions.\n\n## 🚀 Improvements\n\nWe're always open for improvements and suggestions! The [code for this website\nis on GitHub](https://github.com/observabilitystack/spotlight).\n\n## 😎 Need help in tackling AWS costs?\n\nThis service is brought to you by [tboeghk](https://github.com/tboeghk) for free.\nNeed help in tackling AWS EC2 costs? Get started with spot instances\ntoday! Let's talk!",
-        "mode": "markdown"
+        "content": "<style>\n@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap');\n.o11y-about{font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif;color:#16150f;background:#fff;border:1px solid #e7e4da;border-radius:20px;padding:26px 30px;line-height:1.55;box-shadow:0 4px 16px rgba(22,21,15,.06),0 1px 3px rgba(22,21,15,.05);}\n.o11y-about .eyebrow{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:500;color:#2e49ef;display:flex;align-items:center;gap:9px;margin-bottom:14px;}\n.o11y-about .chip{width:26px;height:26px;border-radius:8px;background:linear-gradient(118deg,#2e49ef 0%,#12b3a4 100%);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:14px;}\n.o11y-about h2{font-family:'Space Grotesk','Segoe UI',system-ui,sans-serif;font-weight:600;letter-spacing:-.02em;font-size:26px;line-height:1.1;margin:0 0 10px;}\n.o11y-about p{color:#5f5e54;margin:0 0 18px;font-size:15px;max-width:70ch;}\n.o11y-about .cols{display:flex;gap:28px;flex-wrap:wrap;}\n.o11y-about .col{flex:1 1 240px;}\n.o11y-about .label{font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#908e82;margin-bottom:5px;}\n.o11y-about .col p{font-size:14px;margin:0;}\n.o11y-about a{color:#2e49ef;text-decoration:none;font-weight:500;}\n.o11y-about a:hover{text-decoration:underline;text-underline-offset:2px;}\n.o11y-about .foot{margin-top:20px;padding-top:16px;border-top:1px solid #e7e4da;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.04em;color:#908e82;}\n</style>\n<div class=\"o11y-about\">\n  <div class=\"eyebrow\"><span class=\"chip\">🐞</span> field notes · aws spot prices</div>\n  <h2>About spotlight.o11y.cool</h2>\n  <p>A public database of AWS EC2 spot prices dating back to 2021, for spot-instance sizing analysis. Pick instances not just for a large discount, but with stable, non-decaying price trends so your infrastructure keeps running without interruptions.</p>\n  <div class=\"cols\">\n    <div class=\"col\">\n      <div class=\"label\">🚀 Improvements</div>\n      <p>Suggestions welcome — the <a href=\"https://github.com/observabilitystack/spotlight\">code is on GitHub</a>.</p>\n    </div>\n    <div class=\"col\">\n      <div class=\"label\">😎 Tackling AWS costs?</div>\n      <p>Brought to you for free by <a href=\"https://github.com/tboeghk\">tboeghk</a>. Need help with EC2 spend? <a href=\"https://www.thiswayup.de/\">Let's talk</a>.</p>\n    </div>\n  </div>\n  <div class=\"foot\">o11y.cool — free observability tools &amp; field notes</div>\n</div>",
+        "mode": "html"
       },
       "pluginVersion": "10.4.2",
       "type": "text"

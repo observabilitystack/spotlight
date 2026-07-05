@@ -21,7 +21,9 @@ EOF
 
 ```bash
 kubectl create namespace o11y-cool
-kubectl create configmap spotlight-dashboard --namespace=o11y-cool --from-file=aws-spot-price-dashboard.json
+kubectl create configmap spotlight-dashboard \
+    --namespace=o11y-cool \
+    --from-file=aws-spot-price-dashboard.json
 ```
 
 ```bash
