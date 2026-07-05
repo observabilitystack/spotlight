@@ -15,6 +15,7 @@ aws_access_key="..."
 aws_secret_access_key="..."
 grafana_domain=spotlight.o11y.cool
 grafana_admin_password="..."
+grafana_secret_key="..."
 EOF
 ```
 

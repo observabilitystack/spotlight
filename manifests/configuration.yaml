@@ -61,7 +61,7 @@ data:
     check_for_updates = false
     [security]
     admin_password = ${grafana_admin_password}
-    secret_key = 61TrPlJtwvXtL5kS
+    secret_key = ${grafana_secret_key}
     [users]
     allow_sign_up = false
     allow_org_create = false
